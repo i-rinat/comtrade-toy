@@ -30,6 +30,7 @@ class Channel:
         else:
             raise NotExpectedException("Expected ctype to by either 'A' or 'D'")
         self.data = []
+        self.ctype = ctype
 
 class OscReader:
     def __init__(self, fname=None):
