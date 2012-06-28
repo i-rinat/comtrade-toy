@@ -55,7 +55,13 @@ class MainWindow(QMainWindow):
         help_menu.addAction(help_about_action)
 
     def openSingleFile(self):
-        pass
+        fod = QFileDialog(self, "Open file ...")
+        fod.setFilter("COMTRADE cfg (*.cfg);; All Files (*)")
+        if fod.exec_():
+            if len(fod.selectedFiles()) == 1:
+                fname = fod.selectedFiles()[0]
+                osc = OscReader(fname)
+                self.attach_osc(osc)
 
     def openDirectory(self):
         pass
