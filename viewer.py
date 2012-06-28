@@ -9,8 +9,19 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self, *args)
         self.setWindowTitle("Behold!")
         self.resize(800, 500)
+        self.createWidgets()
+
+    def createWidgets(self):
         self.dataplot = DataPlot()
-        self.setCentralWidget(self.dataplot)
+        self.channel_list = QListWidget()
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.dataplot, stretch=1)
+        hbox.addWidget(self.channel_list, stretch=0)
+
+        central_widget = QWidget()
+        central_widget.setLayout(hbox)
+        self.setCentralWidget(central_widget)
 
     def attach_osc(self, osc):
         self.osc = osc
