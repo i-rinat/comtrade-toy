@@ -95,7 +95,7 @@ class MainWindow(QMainWindow):
 
     def openMultipleFiles(self, fnamelist):
         self.file_list.show()
-        self.file_list.reset()
+        self.file_list.clear()
         for fname in fnamelist:
             basename = os.path.basename(str(fname))
             item = QListWidgetItem(basename)
@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
 
     def attach_osc(self, osc):
         self.osc = osc
-        self.channel_list.reset()
+        self.channel_list.clear()
         for ch in self.osc.channel:
             channel = self.osc.channel[ch]
             item = QListWidgetItem(channel.name)
