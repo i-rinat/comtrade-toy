@@ -45,6 +45,9 @@ class MainWindow(QMainWindow):
         file_quit_action.setShortcut("Ctrl+X")
         file_quit_action.triggered.connect(self.close)
 
+        view_fit_to_view_action = QAction("Fit to view", self)
+        view_fit_to_view_action.triggered.connect(self.autoScaleDataPlot)
+
         help_about_action = QAction("About", self)
         help_about_action.triggered.connect(self.displayAboutDialog)
 
@@ -54,10 +57,18 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(file_quit_action)
 
+        view_menu = self.menuBar().addMenu("View")
+        view_menu.addAction(view_fit_to_view_action)
+
         self.menuBar().addSeparator()
 
         help_menu = self.menuBar().addMenu("Help")
         help_menu.addAction(help_about_action)
+
+    def autoScaleDataPlot(self):
+        self.dataplot.setAxisAutoScale(QwtPlot.yLeft)
+        self.dataplot.setAxisAutoScale(QwtPlot.xBottom)
+        self.dataplot.updateAxes()
 
     def showOpenFileDialog(self):
         fod = QFileDialog(self, "Open file ...")
