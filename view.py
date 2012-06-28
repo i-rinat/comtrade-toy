@@ -34,8 +34,11 @@ class OscReader:
             self.open(fname)
 
     def open(self, fname):
+        self.parse_cfg(fname)
+        self.parse_dat(fname[0:-4]+'.dat')
+
+    def parse_cfg(self, fname):
         f_meta = open(fname, 'r')
-        f_data = open(fname[0:-4]+'.dat', 'rb')
 
         # station name and id
         line = f_meta.readline().strip()
@@ -92,9 +95,12 @@ class OscReader:
         line = f_meta.readline().strip()
         if line != 'BINARY':
             raise NotImplemetedException("Only BINARY .dat supported")
+        self.filetype = 'BINARY'
 
         f_meta.close()
 
+    def parse_dat(self, fname_dat):
+        f_data = open(fname_dat, 'rb')
 
         f_data.close()
 
