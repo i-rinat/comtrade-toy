@@ -31,14 +31,15 @@ class MainWindow(QMainWindow):
         # properties and signals
         self.file_list.hide()
         self.channel_list.currentRowChanged.connect(self.channelListCurrentRowChanged)
+        self.file_list.currentRowChanged.connect(self.fileListCurrentRowChanged)
 
     def createMenus(self):
         file_open_single_action = QAction("Open ...", self)
         file_open_single_action.setShortcut("Ctrl+O")
-        file_open_single_action.triggered.connect(self.openSingleFile)
+        file_open_single_action.triggered.connect(self.showOpenFileDialog)
 
         file_open_directory_action = QAction("Open directory ...", self)
-        file_open_directory_action.triggered.connect(self.openDirectory)
+        file_open_directory_action.triggered.connect(self.showOpenDirectoryDialog)
 
         file_quit_action = QAction("Quit", self)
         file_quit_action.setShortcut("Ctrl+X")
@@ -58,7 +59,7 @@ class MainWindow(QMainWindow):
         help_menu = self.menuBar().addMenu("Help")
         help_menu.addAction(help_about_action)
 
-    def openSingleFile(self):
+    def showOpenFileDialog(self):
         fod = QFileDialog(self, "Open file ...")
         fod.setFileMode(QFileDialog.ExistingFiles)
         fod.setFilter("COMTRADE cfg (*.cfg);; All Files (*)")
@@ -66,10 +67,11 @@ class MainWindow(QMainWindow):
             if len(fod.selectedFiles()) == 1:
                 self.file_list.hide()
                 fname = fod.selectedFiles()[0]
-                osc = OscReader(fname)
-                self.attach_osc(osc)
+                self.openSingleFile(fname)
+            else:
+                self.openMultipleFiles(list(fod.selectedFiles()))
 
-    def openDirectory(self):
+    def showOpenDirectoryDialog(self):
         fod = QFileDialog(self, "Select directory ...")
         fod.setFileMode(QFileDialog.DirectoryOnly)
         if fod.exec_():
@@ -88,6 +90,14 @@ class MainWindow(QMainWindow):
             item = QListWidgetItem(basename)
             item.fullpath = str(fname)
             self.file_list.addItem(item)
+
+    def openSingleFile(self, fname):
+        osc = OscReader(fname)
+        self.attach_osc(osc)
+
+    def fileListCurrentRowChanged(self, row):
+        item = self.file_list.item(row)
+        self.openSingleFile(item.fullpath)
 
     def displayAboutDialog(self):
         QMessageBox.about(self, "About", "Viewer for oscillograms in COMTRADE format.")
