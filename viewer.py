@@ -61,7 +61,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     osc = OscReader('osc-examples/01340703835235278186.cfg')
-    print("osc channels = " + str(len(osc.channel)))
     app = QApplication(sys.argv)
 
     mw = MainWindow()
