@@ -118,7 +118,7 @@ class OscReader:
             for idx in range(0, self.channel_count_a):
                 sample, = struct.unpack('h', f_data.read(2))
             for idx in range(0, (self.channel_count_d -1)//16 +1):
-                sample, = struct.unpack('h', f_data.read(2))
+                sample, = struct.unpack('H', f_data.read(2))
 
         f_data.close()
 
