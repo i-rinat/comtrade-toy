@@ -1,4 +1,6 @@
 import datetime
+import struct
+import os
 
 class NotImplemetedException(Exception): pass
 class NotExpectedException(Exception): pass
@@ -101,6 +103,22 @@ class OscReader:
 
     def parse_dat(self, fname_dat):
         f_data = open(fname_dat, 'rb')
+
+        # each analog channel takes two bytes
+        sample_len = self.channel_count_a * 2
+        # status channels stored by tuples of 16
+        sample_len += 2 * ((self.channel_count_d - 1)//16 + 1)
+        # sample number and timestamp consist of four bytes each
+        sample_len += 4 + 4
+
+        f_size = os.path.getsize(fname_dat)
+        while f_data.tell() < f_size:
+            sample_number, = struct.unpack('i', f_data.read(4))
+            sample_timestamp, = struct.unpack('i', f_data.read(4))
+            for idx in range(0, self.channel_count_a):
+                sample, = struct.unpack('h', f_data.read(2))
+            for idx in range(0, (self.channel_count_d -1)//16 +1):
+                sample, = struct.unpack('h', f_data.read(2))
 
         f_data.close()
 
