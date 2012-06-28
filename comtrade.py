@@ -89,6 +89,8 @@ class OscReader:
         for idx in range(0, self.n_rates):
             line = f_meta.readline().strip()
             self.sample_rate, self.sample_count = line.split(',')
+            self.sample_rate = int(self.sample_rate)
+            self.sample_count = int(self.sample_count)
 
         # timestamps
         self.timestamp1 = f_meta.readline().strip()
