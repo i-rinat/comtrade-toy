@@ -29,6 +29,7 @@ class Channel:
             self.normalstate = int(self.normalstate)
         else:
             raise NotExpectedException("Expected ctype to by either 'A' or 'D'")
+        self.data = []
 
 class OscReader:
     def __init__(self, fname=None):
@@ -115,10 +116,21 @@ class OscReader:
         while f_data.tell() < f_size:
             sample_number, = struct.unpack('i', f_data.read(4))
             sample_timestamp, = struct.unpack('i', f_data.read(4))
+            ch = 1
             for idx in range(0, self.channel_count_a):
                 sample, = struct.unpack('h', f_data.read(2))
+                channel = self.channel[ch]
+                channel.data.append(channel.a * sample + channel.b)
+                ch += 1
             for idx in range(0, (self.channel_count_d -1)//16 +1):
                 sample, = struct.unpack('H', f_data.read(2))
+                locidx = 0
+                while locidx < 16 and ch <= self.channel_count:
+                    bit = sample & 1
+                    self.channel[ch].data.append(bit)
+                    sample >>= 1
+                    ch += 1
+                    locidx += 1
 
         f_data.close()
 
