@@ -135,10 +135,7 @@ class MainWindow(QMainWindow):
         self.plot_osc_channel(cid)
 
 if __name__ == '__main__':
-    osc = OscReader('osc-examples/01340703835235278186.cfg')
     app = QApplication(sys.argv)
-
     mw = MainWindow()
-    mw.attach_osc(osc)
     mw.show()
     sys.exit(app.exec_())
