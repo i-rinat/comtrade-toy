@@ -10,6 +10,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Behold!")
         self.resize(800, 500)
         self.createWidgets()
+        self.createMenus()
 
     def createWidgets(self):
         # widgets
@@ -26,6 +27,41 @@ class MainWindow(QMainWindow):
 
         # properties and signals
         self.channel_list.currentRowChanged.connect(self.channelListCurrentRowChanged)
+
+    def createMenus(self):
+        file_open_single_action = QAction("Open ...", self)
+        file_open_single_action.setShortcut("Ctrl+O")
+        file_open_single_action.triggered.connect(self.openSingleFile)
+
+        file_open_directory_action = QAction("Open directory ...", self)
+        file_open_directory_action.triggered.connect(self.openDirectory)
+
+        file_quit_action = QAction("Quit", self)
+        file_quit_action.setShortcut("Ctrl+X")
+        file_quit_action.triggered.connect(self.close)
+
+        help_about_action = QAction("About", self)
+        help_about_action.triggered.connect(self.displayAboutDialog)
+
+        file_menu = self.menuBar().addMenu("File")
+        file_menu.addAction(file_open_single_action)
+        file_menu.addAction(file_open_directory_action)
+        file_menu.addSeparator()
+        file_menu.addAction(file_quit_action)
+
+        self.menuBar().addSeparator()
+
+        help_menu = self.menuBar().addMenu("Help")
+        help_menu.addAction(help_about_action)
+
+    def openSingleFile(self):
+        pass
+
+    def openDirectory(self):
+        pass
+
+    def displayAboutDialog(self):
+        QMessageBox.about(self, "About", "Viewer for oscillograms in COMTRADE format.")
 
     def attach_osc(self, osc):
         self.osc = osc
