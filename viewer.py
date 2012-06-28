@@ -1,4 +1,5 @@
 import sys
+import os
 from comtrade import OscReader
 from dataplot import DataPlot
 from PyQt4.Qt import *
@@ -16,16 +17,19 @@ class MainWindow(QMainWindow):
         # widgets
         self.dataplot = DataPlot()
         self.channel_list = QListWidget()
+        self.file_list = QListWidget()
         central_widget = QWidget()
 
         # layout
         hbox = QHBoxLayout()
+        hbox.addWidget(self.file_list, stretch=0)
         hbox.addWidget(self.dataplot, stretch=1)
         hbox.addWidget(self.channel_list, stretch=0)
         central_widget.setLayout(hbox)
         self.setCentralWidget(central_widget)
 
         # properties and signals
+        self.file_list.hide()
         self.channel_list.currentRowChanged.connect(self.channelListCurrentRowChanged)
 
     def createMenus(self):
@@ -56,15 +60,34 @@ class MainWindow(QMainWindow):
 
     def openSingleFile(self):
         fod = QFileDialog(self, "Open file ...")
+        fod.setFileMode(QFileDialog.ExistingFiles)
         fod.setFilter("COMTRADE cfg (*.cfg);; All Files (*)")
         if fod.exec_():
             if len(fod.selectedFiles()) == 1:
+                self.file_list.hide()
                 fname = fod.selectedFiles()[0]
                 osc = OscReader(fname)
                 self.attach_osc(osc)
 
     def openDirectory(self):
-        pass
+        fod = QFileDialog(self, "Select directory ...")
+        fod.setFileMode(QFileDialog.DirectoryOnly)
+        if fod.exec_():
+            dir = fod.selectedFiles()[0]
+            fnamelist = []
+            for fname in os.listdir(dir):
+                if fname[-4:] == '.cfg':
+                    fnamelist.append(dir + os.sep + fname)
+            self.openMultipleFiles(fnamelist)
+
+    def openMultipleFiles(self, fnamelist):
+        self.file_list.show()
+        self.file_list.reset()
+        for fname in fnamelist:
+            basename = os.path.basename(str(fname))
+            item = QListWidgetItem(basename)
+            item.fullpath = str(fname)
+            self.file_list.addItem(item)
 
     def displayAboutDialog(self):
         QMessageBox.about(self, "About", "Viewer for oscillograms in COMTRADE format.")
