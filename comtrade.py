@@ -133,8 +133,3 @@ class OscReader:
                     locidx += 1
 
         f_data.close()
-
-
-osc = OscReader('osc-examples/01340703835235278186.cfg')
-
-print("osc channels = " + str(len(osc.channel)))
