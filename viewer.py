@@ -139,6 +139,15 @@ class MainWindow(QMainWindow):
         else:
             self.dataplot.setAxisTitle(QwtPlot.yLeft, "on/off")
             self.dataplot.setAxisScale(QwtPlot.yLeft, 0, 1)
+
+        min_y, max_y = min(self.osc.channel[ch].data), max(self.osc.channel[ch].data)
+        min_t, max_t = min(t), max(t)
+        # widen a bit
+        min_y, max_y = min_y-0.03*(max_y-min_y), max_y+0.03*(max_y-min_y)
+
+        self.dataplot.setAxisScale(QwtPlot.yLeft, min_y, max_y)
+        self.dataplot.setAxisScale(QwtPlot.xBottom, min(t), max(t))
+        self.dataplot.zoomer.setZoomBase()
         self.dataplot.replot()
 
     def channelListCurrentRowChanged(self, row):
