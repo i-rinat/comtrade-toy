@@ -1,3 +1,6 @@
+import sip
+sip.setapi('QString', 2)
+
 import sys
 import os
 from comtrade import OscReader
@@ -97,9 +100,9 @@ class MainWindow(QMainWindow):
         self.file_list.show()
         self.file_list.clear()
         for fname in fnamelist:
-            basename = os.path.basename(str(fname))
+            basename = os.path.basename(fname)
             item = QListWidgetItem(basename)
-            item.fullpath = str(fname)
+            item.fullpath = fname
             self.file_list.addItem(item)
 
     def openSingleFile(self, fname):
