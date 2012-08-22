@@ -154,6 +154,7 @@ class MainWindow(QMainWindow):
         self.dataplot.replot()
 
     def channelListCurrentRowChanged(self, row):
+        if row == -1: row = 0
         cid = self.channel_list.item(row).cid
         self.plot_osc_channel(cid)
 
