@@ -7,6 +7,7 @@ from comtrade import OscReader
 from dataplot import DataPlot
 from PyQt4.Qt import *
 from PyQt4.Qwt5 import *
+import ConfigParser
 
 class MainWindow(QMainWindow):
     def __init__(self, *args):
@@ -15,6 +16,8 @@ class MainWindow(QMainWindow):
         self.resize(800, 500)
         self.createWidgets()
         self.createMenus()
+        self.channel_renames = dict()
+        self.fillChannelRenames()
 
     def createWidgets(self):
         # widgets
@@ -121,7 +124,11 @@ class MainWindow(QMainWindow):
         self.channel_list.clear()
         for ch in self.osc.channel:
             channel = self.osc.channel[ch]
-            item = QListWidgetItem(channel.name)
+            if channel.name in self.channel_renames:
+                channel_name = self.channel_renames[channel.name]
+            else:
+                channel_name = channel.name
+            item = QListWidgetItem(channel_name)
             item.cid = ch
             self.channel_list.addItem(item)
         self.plot_osc_channel(1)
@@ -157,6 +164,19 @@ class MainWindow(QMainWindow):
         if row == -1: row = 0
         cid = self.channel_list.item(row).cid
         self.plot_osc_channel(cid)
+
+    def fillChannelRenames(self):
+        config = ConfigParser.RawConfigParser()
+        config.optionxform = str
+        config.read('renames.ini')
+        sections = config.sections()
+        if 'renames' in sections:
+            print("found channel renames in renames.ini")
+            for name in config.options('renames'):
+                name = name.decode('utf-8')
+                value = config.get('renames', name).decode('utf-8')
+                self.channel_renames[name] = value
+                print ('"{}" => "{}"'.format(name.encode('utf-8'), value.encode('utf-8')))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
